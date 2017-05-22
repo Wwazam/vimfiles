@@ -1,15 +1,29 @@
 set nocompatible
 
 call plug#begin('~/vimfiles/plugged')
-Plug 'honza/vim-snippets'
 Plug 'https://github.com/vimwiki/vimwiki.git'
 Plug 'https://github.com/itchyny/calendar.vim.git'
+Plug 'https://github.com/ap/vim-templates.git'
+Plug 'https://github.com/vim-scripts/nextval.git'
+Plug 'https://github.com/terryma/vim-multiple-cursors'
+Plug 'https://github.com/vim-airline/vim-airline.git'
+Plug 'https://github.com/ervandew/supertab.git'
+Plug 'https://github.com/scrooloose/nerdcommenter'
+Plug 'https://github.com/tomtom/tlib_vim.git'
+Plug 'https://github.com/MarcWeber/vim-addon-mw-utils.git'
+Plug 'https://github.com/garbas/vim-snipmate.git'
+Plug 'honza/vim-snippets'
 call plug#end()
 
 let g:calendar_google_calendar = 1
 let g:calendar_google_task = 1
 
-let g:vimwiki_folding = 'list'
+let g:vimwiki_list = [{ 'path': '~/Documents/_Notes/wiki/', 'auto_toc': 1, 'vimwiki_folding': 'list' }]
+
+let g:templates_empty_files = 1
+
+nmap <silent> + <Plug>nextvalInc
+nmap <silent> - <Plug>nextvalDec
 
 let mapleader="\<Space>"                          " leader key
 
@@ -18,6 +32,7 @@ cno jj <c-c>
 colorscheme distinguished                               " color scheme
 
 set number                                        " show line number
+set relativenumber
 set cursorline                                    " highlight the cursor line
 
 set autoindent                                    " enable auto indent
@@ -112,5 +127,20 @@ function! NextClosedFold(dir)
         call winrestview(view)
     endif
 endfunction
+
+" Convert slashes to backslashes for Windows.
+" ,cs copies just the filename.
+" ,cl copies the filename including its full path.
+" ,c8 copies the filename in 8.3 format for DOS and Windows 9x
+if has('win32')
+  nmap <silent> ,cs :let @*=substitute(expand("%"), "/", "\\", "g")<CR>
+  nmap <silent> ,cl :let @*=substitute(expand("%:p"), "/", "\\", "g")<CR>
+
+  " This will copy the path in 8.3 short format, for DOS and Windows 9x
+  nmap <silent> ,c8 :let @*=substitute(expand("%:p:8"), "/", "\\", "g")<CR>
+else
+  nmap <silent> ,cs :let @*=expand("%")<CR>
+  nmap <silent> ,cl :let @*=expand("%:p")<CR>
+endif
 
 au BufRead,BufNewFile *  setfiletype txt 
